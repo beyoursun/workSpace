@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Hello react</title>
+	
+</head>
+<body>	
+	<div id="app">
+		<!-- react where -->
+	</div>
+</body>
+<script src="../../build/react.js"></script>
+<script src="../../build/react-dom.js"></script>
+<script>
+	ReactDOM.render(
+        React.DOM.h1(null,'hello world'),
+		document.getElementById('app')
+	)
+// React.DOM.*
+// ReactDOM
+// 区别： 
+//  前者是已经预定义好的html元素集合，如，a,area,b,br,buuton,....
+//  后者是在浏览器中渲染应用的一种途径,可以参考reactDOM.render()方法。
+
+// 例子中，h1（）  第一个参数接受一个对对象，用于制定组件的任何属性，比如dom属性
+ // React.DOM.h1(
+ 	// {
+ 	// 	id: 'my-id'
+ 	// },
+
+ 	// 'hello world'
+ 	// ),
+
+ // 第二个参数定义了该组件的子元素
+
+
+
+ // React.DOM.div(attributes, children)
+ // ReactDOM.render(reactWhat, domWhere)
+</script>
+</html>
