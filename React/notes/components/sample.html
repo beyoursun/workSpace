@@ -82,12 +82,12 @@ var ComponentWithPropTypes = React.createClass({
 		}
 	},
 	render: function(){
-		return React.DOM.span(null, 
-			'my firstName is ' + this.props.firstName  +
-			'MY address is ' + this.props.address
+		return React.DOM.p(null, 
+			React.DOM.p(null,' MY address is ' + this.props.address),
+			'my firstName is ' + this.props.firstName 
 		)
 	}
-});
+});	
 
 // getDefaultProps 方法返回一个对象，为非必填项 提供默认值
 
