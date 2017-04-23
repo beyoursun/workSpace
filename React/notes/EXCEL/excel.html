@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>EXCEL</title>
+	<style>
+		.my-table {
+			border: 1px solid #000;
+		}
+
+		.my-table thead {
+			background: #000;
+			color: #fff;
+		}
+		.my-table tbody tr:hover {
+			background-color: gray;
+
+		}
+	</style>
+</head>
+<body>
+	<div id="app"></div>
+</body>
+<script src="../../build/react.js"></script>
+<script src="../../build/react-dom.js"></script>
+<script>
+	var headers = [
+		'Book', 'Author', 'Language', 'Published', 'Sales' 
+	];
+	var data = [
+		['Book1', 'Tom', 'English', '2000-01-01', '100'],
+		['Book2', 'Tom2', 'English', '2000-01-02', '100'],
+		['Book3', 'Tom3', 'English', '2000-01-03', '100'],
+		['Book4', 'Tom4', 'English', '2000-01-04', '100'],
+		['Book5', 'Tom5', 'English', '2000-01-05', '100'],
+	];
+	var Excel = React.createClass({
+		displayName: 'Excel',
+		propTypes: {
+			// array 验证器，以确保属性总是一个数组;arrayof 函数 验证元素的具体类型
+			// 这里让表头标题 和 表格数据只接受字符串数组
+			headers: React.PropTypes.arrayOf( 
+				React.PropTypes.string
+			),
+			initialData: React.PropTypes.arrayOf(
+				React.PropTypes.arrayOf(
+					React.PropTypes.string
+				)
+			)
+		},
+		getInitialState() {
+			return {
+				data: this.props.initialData
+			};
+		},
+		render() {
+			return (
+				React.DOM.table({
+					className:"my-table"
+				},
+					React.DOM.thead(null,
+						React.DOM.tr(null,
+							this.props.headers.map(function(title, index){
+									return React.DOM.th({key: index}, title)
+								}
+							)
+						)
+					),
+					React.DOM.tbody(null,
+						this.state.data.map(function(row, index) {
+							return (
+								React.DOM.tr({key:index},
+									row.map(function(cell, index){
+										return React.DOM.td({key: index}, cell)
+									})
+								)
+							)
+						})
+					)					
+				)
+			)
+		}
+	});
+
+	// TODO 改进改组件， 排序 , ...
+	ReactDOM.render(
+		React.createElement(
+			Excel,
+			{
+				headers: headers,
+				initialData: data	
+			}
+		),
+		document.getElementById('app')
+	);
+</script>
+</html>
