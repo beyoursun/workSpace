@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Hello react</title>
+	
+</head>
+<body>	
+	<div id="app">
+		<!-- react where -->
+	</div>
+</body>
+<script src="../../build/react.js"></script>
+<script src="../../build/react-dom.js"></script>
+<script>
+
+	// 简单实现自己的mixin版本，仅仅是对相等性进行浅层（非递归）检查：
+	var ReactComponentWithPureRenderMixin = {
+		shouldComponentUpdate(nextProps, nextState) {
+			return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
+		}
+	};
+
+	var logMixin = {
+		_log(methodName, args) {
+			console.log(this.name + '::' + methodName, args);
+		},
+		componentWillUpdate() { // render() 前调用
+			console.log('componentWillUpdate' ,arguments);
+		},
+		componentDidUpdate() { // render() 后调用
+			console.log('componentDidUpdate' ,arguments);
+		},
+		componentWillMount() { // 新结点插入DOM结构 前调用
+			console.log('componentWillMount' ,arguments);
+		},
+		componentDidMount() { // 新结点插入DOM结构 后调用
+			console.log('componentDidMount' ,arguments);
+		},
+		componentWillUnmount() { // 在组件从DOM中移除时立刻调用
+			console.log('componentWillUnmount' ,arguments);
+		}
+	};
+
+	var Counter = React.createClass({
+		name: 'Counter',
+		// mixins: [logMixin],
+		propTypes: {
+			count: React.PropTypes.number.isRequired
+		},
+		shouldComponentUpdate(nextProps, nextState_ignore) {
+			return nextProps.count !== this.props.count;
+		},		
+		render() {
+			console.log(this.name + '::render()');
+			return React.DOM.span(null, this.props.count)
+		}
+	});
+	// 也可以使用react-width-addon.js 插件库 来代替 react.js, 使用它的 mixin［React.addons.PureRenderMixin］ ,来完成这一步优化
+
+
+	var TextAreaCounter = React.createClass({
+		name: 'TextAreaCounter',
+		// mixins:[logMixin],
+		propTypes: {
+			text: React.PropTypes.string
+		},
+		getDefaultProps() {
+			return {
+				text: ''
+			}
+		},
+		render() {
+			console.log(this.name + '::render()');
+			var counter = null;
+			if(this.state.text.length > 0) {
+				counter = React.DOM.h3(null,
+					React.createElement(Counter, {
+						count: this.state.text.length
+					})
+				)
+			}
+			return React.DOM.div(null,
+				React.DOM.textarea({
+					value: this.state.text,
+					onChange: this._textChange
+				}),
+				counter
+			);
+		},
+		getInitialState() {
+			return {
+				text: this.props.text
+			}
+		},
+		_textChange(ev) {
+			this.setState({
+				text: ev.target.value
+			});
+		},
+		componentDidUpdate(prevProps, prevState) {
+		if(this.state.text.length > 10) {
+				this.replaceState(prevState);
+			}			
+		}
+	});
+	ReactDOM.render(
+        React.createElement(TextAreaCounter, {
+        	text: 'Bob'
+        }),
+		document.getElementById('app')
+	);
+</script>
+</html>
