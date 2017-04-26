@@ -36,8 +36,10 @@
       ];
 	var Excel = React.createClass({
 		displayName: 'Excel',
+		_preSearchData: null,
+		_log:[],
 		propTypes: {
-			// array 验证器，以确保属性总是一个数组;arrayof 函数 验证元素的具体类型
+			// array 验证器，以确保属性总是一个数组; arrayof 函数 验证元素的具体类型
 			// 这里让表头标题 和 表格数据只接受字符串数组
 			headers: React.PropTypes.arrayOf( 
 				React.PropTypes.string
@@ -47,6 +49,34 @@
 					React.PropTypes.string
 				)
 			)
+		},
+		componentDidMount() {
+			document.keydown = function(e) {
+				if (e.altKey && e.shiftKey && e.keyCode === 82) { // ALT + SHIFT + R(replay)
+					this._replay();
+				}
+			}.bind(this);
+		},
+		_logState(newState) {
+			this._log.push(JSON.parse(JSON.stringify(
+				this._log.length === 0 ? this.state : newState
+			)));
+			this.setState(newState);
+		},
+		_replay() {
+			if (this._log.length === 0) {
+				console.log('No state to replay yet');
+				return ;
+			}
+
+			var idx = -1;
+			var interval = setInterval(function(){
+				idx++;
+				if (idx === this._log.length - 1) {
+					clearInterval(interval);
+				}
+				this.setState(this._log(idx))
+			}.bind(this), 1000);
 		},
 		_showEditor(e) {
 			this.setState({
@@ -91,17 +121,108 @@
 				data: this.props.initialData,
 				sortBy: null,
 				descending: false,
-				edit: null
+				edit: null,
+				search: false
 			};
 		},
 		render() {
 			return (
-				React.DOM.table({
-					className:"my-table"
-				},
-					React.DOM.thead({
-						onClick: this._sort
-					},
+				React.DOM.div(null,
+					this._renderToolbar(),
+					this._renderTable()
+				)
+			)
+		},
+		_toggleSearch() {
+			if (this.state.search) {
+				this.setState({
+					data: this._preSearchData,
+					search: false
+				})
+
+			} else {
+				this._preSearchData = this.state.data,
+				this.setState({
+					search: true
+				})
+			}
+		},
+		_search(e){
+			var needle = e.target.value.toLowerCase();
+			// 输入框的数据被清空
+			if (!needle){
+				this.setState({
+					data: this._preSearchData
+				});
+				return;
+			}
+			// 需要搜索的那一列的索引值  
+			var idx = e.target.dataset.idx;
+			var searchData = this._preSearchData.filter(function(row){
+				return row[idx].toString().toLowerCase().indexOf(needle) > -1;
+			});
+			this.setState({
+				data: searchData
+			}) 
+		},
+		_renderToolbar() {
+			return  React.DOM.div({className:toolbar},
+				React.DOM.button({
+					onClick: this._toggleSearch,
+					className: 'toorBar'
+				},'search'),
+				React.DOM.a({
+					onClick: this._download.bind(this, 'json'),
+					href: 'data.json'
+				},'Export JSON'),				
+				React.DOM.a({
+					onClick: this._download.bind(this, 'csv'),
+					href: 'data.csv'
+				},'Export CSV')				
+
+			)
+		},
+		_download(format, ev) {
+			var contents = format === 'json'
+			  ? JSON.stringify(this.state.data)
+			  : this.state.data.reduce(function(result, row){
+			  	return result + 
+			  		row.reduce(function(rowresult, cell, idx) {
+			  			return rowresult +
+			  			' " ' +
+			  			cell.replace(/"/g, '"') +
+			  			'"' +
+			  			(idx < row.length - 1 ? ',' : '');
+			  		}, '')
+			  	+ "\n";	
+			  }, '');
+
+			  var URL = window.URL || window.webkitURL;
+			  var blob =  new Blob([contents],{type: 'text/' + format});
+			  ev.target.href = URL.createObjectURL(blob);
+			  ev.target.download = 'data.' + format;	
+		},
+		_renderSearch(){
+			if(!this.state.search) {
+				return null;
+			}
+			return (
+				React.DOM.tr({onChange: this._search},
+					this.props.headers.map(function(_ignore, idx) {
+						return React.DOM.td({key: idx},
+							React.DOM.input({
+								type: 'text',
+								'data-idx': idx
+							})
+						)
+					})
+				)
+			)
+		},
+		_renderTable() {
+			return (
+				React.DOM.table({className:"my-table"},
+					React.DOM.thead({onClick: this._sort},
 						React.DOM.tr(null,
 							this.props.headers.map(function(title, index){
 									if (this.state.sortBy === index) {
@@ -111,15 +232,13 @@
 								}, this)
 						)
 					),
-					React.DOM.tbody({
-						onDoubleClick : this._showEditor
-					},
+					React.DOM.tbody({onDoubleClick : this._showEditor},
+						this._renderSearch(),
 						this.state.data.map(function(row, rowIndex) {
 							return (
 								React.DOM.tr({key:rowIndex},
 									row.map(function(cell, index){
 										var content = cell;
-										// todo 如果index和rowindex 的值与当前单元格匹配，就把content变为一个输入框
 										var edit = this.state.edit;
 										if(edit && edit.row === rowIndex && edit.cell === index) {
 											content = React.DOM.form({onSubmit: this._save},
@@ -127,7 +246,7 @@
 													type: 'text',
 													defaultValue: content
 												})
-											)
+											);
 										}
 										return React.DOM.td({
 											key: index,
@@ -136,13 +255,13 @@
 									},this)
 								)
 							)
-						})
+						}, this)
 					)					
 				)
 			)
 		}
 	});
-	// TODO 改进改组件， 可编辑, ...
+
 	ReactDOM.render(
 		React.createElement(
 			Excel,
