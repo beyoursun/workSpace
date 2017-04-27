@@ -1,0 +1,50 @@
+body,html{padding-bottom:6%;font-family:"Helvetica Neue",Helvetica,STHeiTi,sans-serif}
+ul{list-style:none;margin:0;padding:0;font-size:.9rem}
+select{direction:rtl}
+select option{direction:ltr}
+header .title{color:#fff}
+.pay-ul,ul>li{line-height:30px;display:-webkit-box}
+.footer{position:fixed;width:100%;bottom:0}
+.picker-item,.toolbar .title{font-size:16px}
+.picker-button.close-picker{font-size:14px}
+.pay-ul{height:50px;line-height:50px;font-size:1.4rem}
+.pay-ul>li{width:50%;border:1px solid #ccc;text-align:center}
+.pay-ul>li p{width:100%;height:50px;line-height:50px;font-size:14px}
+.amout-li{background:#fff}
+.box{border:none;width:88%;margin:3% auto}
+.left{font-weight:700}
+.right{font-size:.84rem}
+.label-item{position:relative;-webkit-tap-highlight-color:transparent;background:#fff;border-bottom:1px solid #dcdcdc;margin:0 auto;line-height:45px;padding-right:5px}
+.numInput{width:2rem;text-align:center;height:1rem;vertical-align:middle;line-height:1rem}
+.margin-left{margin-left:0}
+.label{position:relative;display:inline-block;width:60%}
+.label1{display:inline-block;padding-left:16px}
+.label-title{line-height:45px;font-weight:700;color:#5f5f5f;border-bottom:1px solid #ddd;font-size:1.3rem}
+.label-title p{margin:0 auto}
+.label-text{width:36%}
+.label-select{color:#0079FB}
+.input{text-align:right}
+.label .icon-r{padding-right:10px}
+.clear{clear:both}
+[class*=icon-],[class^=icon-]{display:inline-block}
+.label-space{letter-spacing:28px}
+.input input{line-height:30px;text-align:right;font-size:14px}
+.span-img{width:30px;height:30px;margin-top:-4px;vertical-align:middle}
+.date-row label{width:110px}
+.date-row p{margin-left:110px}
+.date-to-select:after{top:50%;margin-top:-22px;right:0;background-size:12px}
+#boy,#girl{width:1.2rem;height:1.2rem;float:left;margin-top:3px;margin-right:10px}
+.errorText{margin-bottom:10px;color:red;line-height:20px;height:20px}
+.sexBox{line-height:22px;width:60%}
+.box-sex{text-align:right}
+.checkEmail{width:1rem;height:1rem}
+.email-label{width:63%;padding-right:4%;display:inline-block;text-align:right;float:right}
+#u{text-align:center;border-bottom:none}
+#checkbox_send,.checkBox{width:1.3rem;height:1.3rem;margin-top:16px;vertical-align:top}
+#checkbox_send_footer{width:30px;vertical-align:middle;margin-top:-2px}
+#confirm_read{font-size:1rem;color:#686868}
+.label-secrion{border-bottom:1px solid #dcdcdc}
+input[type=checkbox]{vertical-align:sub}
+.confirm_know{color:#3bf}
+.pay-ul .border-left{border-left:none;background:#3bf;color:#fff;cursor:pointer}
+.amout-p{color:#3bf}
