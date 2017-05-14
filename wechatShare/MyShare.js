@@ -1,6 +1,8 @@
-"use strict";
-(function(root) {
 
+"use strict";
+
+(function(root) {
+  
     // Store setTimeout reference so promise-polyfill will be unaffected by
     // other code modifying setTimeout (like sinon.useFakeTimers())
     var setTimeoutFunc = setTimeout;
@@ -328,6 +330,7 @@ var PShare = function() {
 
                 if (Bools.checkWechat() && Bools.checkObjType(assigns)) {
 
+                    console.log('in wechat');
                     wechatData.shareshareTitle = assigns.shareshareTitle;
                     wechatData.shareshareDesc = assigns.shareshareDesc;
                     wechatData.shareshareImgUrl = assigns.shareshareImgUrl;
@@ -345,7 +348,6 @@ var PShare = function() {
                             _self.get(testUrl, {
                                 url: url
                             }).then(function(data) {
-                                console.log(typeof data);
                                 // data = typeof data === 'object' ? data : JSON.parse(data);
                                 if (data) {
                                     wechatData.appId = data.appId;
@@ -375,7 +377,6 @@ var PShare = function() {
                 // 配置微信分享
                 console.log('configWxShare');
 
-                console.log(wx);
                 wx.config({
                     debug: false,
                     appId: wechatData.appId, // 必填，公众号的唯一标识
@@ -440,7 +441,6 @@ var PShare = function() {
             },
 
             startRun: function(assign) {
-                console.log('ss');
                 Getters.setShareInfo(assign);
             }
         };
