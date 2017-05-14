@@ -82,7 +82,7 @@
 
                     var _self = this;
 
-                    if (!Bools.checkWechat() && Bools.checkObjType(assigns)) {
+                    if (Bools.checkWechat() && Bools.checkObjType(assigns)) {
 
                         console.log('in wechat');
                         wechatData.shareshareTitle = assigns.shareshareTitle;
