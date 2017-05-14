@@ -78,7 +78,7 @@
                     (document.getElementsByTagName('head')[0] || document.body || document.documentElement).appendChild(script);
                 },
 
-                setShareInfo: function(assigns) {
+                setShareInfo: function(assigns, configUrl) {
 
                     var _self = this;
 
@@ -95,8 +95,8 @@
 
                                 var url = window.location.href.split('#')[0];
                                 var testUrl = 'https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js';
-                                var uri = window.location.origin + '/icp/mobile_single_insurance/wechatShare.do';
-
+                                var uri = configUrl || window.location.origin + '/icp/mobile_single_insurance/wechatShare.do';
+                                
                                 // TODO
                                 // 调用 .do 需要使用后post方法
                                 _self.get(testUrl, {
@@ -193,8 +193,8 @@
                     console.log('init');
                 },
 
-                startRun: function(assign) {
-                    Getters.setShareInfo(assign);
+                startRun: function(assign, configUrl) {
+                    Getters.setShareInfo(assign, configUrl);
                 }
             };
 
@@ -203,15 +203,15 @@
                 console.log('ready');
             },
 
-            init: function(assign) {
-                Engine.startRun(assign);
+            init: function(assign, configUrl) {
+                Engine.startRun(assign, configUrl);
             }
         }
     }();
 
     PShare.ready();
-    global.iShare = function(Config) {
-        PShare.init(Config);
+    global.iShare = function(Config, configUrl) {
+        PShare.init(Config, configUrl);
     }
 })(this)
 
@@ -222,5 +222,5 @@
 // 	 shareshareDesc:'分享详情', //
 // 	 shareshareImgUrl:'https://xxx', //产品首页的图片链接，取绝对路径
 // 	 shareshareLink:'', //取首页URL
-// 	})
+// 	}, 'http://www.example.com/wechat/config')
 // </script>
