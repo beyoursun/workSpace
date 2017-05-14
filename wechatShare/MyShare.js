@@ -1,4 +1,4 @@
-;(function (global) {
+; (function(global) {
 
     var PShare = function() {
 
@@ -26,33 +26,31 @@
             },
             wechatData = {},
             Getters = {
-                http: function(uri, method, data, headers) {
-                    return new Promise(function(resolve, reject) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open(method, uri, true);
-                        if (headers) {
-                            for (var p in headers) {
-                                xhr.setRequestHeader(p, headers[p]);
+                http: function(uri, method, data, headers, success, error) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open(method, uri, true);
+                    if (headers) {
+                        for (var p in headers) {
+                            xhr.setRequestHeader(p, headers[p]);
+                        }
+                    }
+                    xhr.addEventListener('readystatechange', function(e) {
+                        if (xhr.readyState === 4) {
+                            if (String(xhr.status).match(/^2\d\d$/)) {
+                                success(xhr.responseText);
+                            } else {
+                                error(xhr);
                             }
                         }
-                        xhr.addEventListener('readystatechange', function(e) {
-                            if (xhr.readyState === 4) {
-                                if (String(xhr.status).match(/^2\d\d$/)) {
-                                    resolve(xhr.responseText);
-                                } else {
-                                    reject(xhr);
-                                }
-                            }
-                        });
-                        xhr.send(data);
                     });
+                    xhr.send(data);
                 },
 
-                get: function(uri) {
-                    return this.http(uri, 'GET', null);
+                get: function(uri, data, success, error) {
+                    this.http(uri, 'GET', data, null, success, error);
                 },
 
-                post: function(uri, data) {
+                post: function(uri, data, success, error) {
                     if (typeof data === 'object' && !(data instanceof String || (FormData && data instanceof FormData))) {
                         var params = [];
                         for (var p in data) {
@@ -67,26 +65,24 @@
                         data = params.join('&');
                     }
 
-                    return this.http(uri, 'POST', data || null, {
+                    this.http(uri, 'POST', data || null, {
                         "Content-type": "application/x-www-form-urlencoded"
-                    });
+                    }, success, error);
                 },
 
-                jsLoader: function(src) {
-                    return new Promise(function(resolve, reject) {
-                        var script = document.createElement('script');
-                        script.src = src;
-                        script.addEventListener('load', resolve);
-                        script.addEventListener('error', reject);
-                        (document.getElementsByTagName('head')[0] || document.body || document.documentElement).appendChild(script);
-                    })
+                jsLoader: function(src, load, error) {
+                    var script = document.createElement('script');
+                    script.src = src;
+                    script.addEventListener('load', load);
+                    script.addEventListener('error', error);
+                    (document.getElementsByTagName('head')[0] || document.body || document.documentElement).appendChild(script);
                 },
 
                 setShareInfo: function(assigns) {
 
                     var _self = this;
 
-                    if (Bools.checkWechat() && Bools.checkObjType(assigns)) {
+                    if (!Bools.checkWechat() && Bools.checkObjType(assigns)) {
 
                         console.log('in wechat');
                         wechatData.shareshareTitle = assigns.shareshareTitle;
@@ -95,7 +91,7 @@
                         wechatData.shareshareLink = assigns.shareshareLink;
 
                         if (!Bools.checkIsInclude('jweixin-1.0.0.js')) {
-                            _self.jsLoader('https://res.wx.qq.com/open/js/jweixin-1.0.0.js').then(function() {
+                            _self.jsLoader('https://res.wx.qq.com/open/js/jweixin-1.0.0.js', function() {
 
                                 var url = window.location.href.split('#')[0];
                                 var testUrl = 'https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js';
@@ -105,22 +101,21 @@
                                 // 调用 .do 需要使用后post方法
                                 _self.get(testUrl, {
                                     url: url
-                                }).then(function(data) {
+                                }, function(data) {
                                     // data = typeof data === 'object' ? data : JSON.parse(data);
                                     if (data) {
                                         wechatData.appId = data.appId;
                                         wechatData.timestamp = data.timestamp;
                                         wechatData.nonceStr = data.noncestr;
                                         wechatData.signature = data.signature;
-
                                     }
                                     _self.configWxShare();
 
-                                }).catch(function(e) {
-                                    throw e;
+                                }, function(e) {
+                                    throw new Error(e);
                                 })
-                            }).catch(function(e) {
-                                throw e;
+                            }, function(e) {
+                                throw new Error(e);
                             })
                         } else {
                             _self.configWxShare();
