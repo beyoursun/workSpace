@@ -245,7 +245,7 @@ var PShare = function() {
     var Version = '0.0.1',
         Bools = {
             checkObjType: function(a) {
-                return Object.prototype.toString.call({}) === '[object Object]';
+                return Object.prototype.toString.call(a) === '[object Object]';
             },
             checkFunType: function(a) {
                 return "function" == typeof a;
